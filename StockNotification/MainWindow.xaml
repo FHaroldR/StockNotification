@@ -49,7 +49,7 @@
                 Background="White"
                 Padding="10"
                 BorderThickness="0"
-                Cursor="Hand" Click="Button_Click">
+                Cursor="Hand">
                 <Button.Effect>
                     <DropShadowEffect Color="Gray" BlurRadius="10" ShadowDepth="3"/>
                 </Button.Effect>
