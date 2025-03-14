@@ -10,8 +10,8 @@ namespace StockNotification
 {
     public partial class MainWindow : Window
     {
-        private string connectionString = "Data Source=RONI;Database=InventorySystemdatabaseUpdated;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
-        private List<StockItem> stockList = new List<StockItem>(); // Caching for filtering
+        private readonly string connectionString = "Data Source=RONI;Database=InventorySystemdatabaseUpdated;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
+        private readonly List<StockItem> stockList = new List<StockItem>(); // Caching for filtering
 
         public MainWindow()
         {
@@ -28,17 +28,17 @@ namespace StockNotification
             {
                 conn.Open();
                 string query = @"
-            SELECT a.Item_Name, a.Item_Quantity, 
-                CASE 
-                    WHEN d.Item_Name IS NOT NULL THEN 'Damaged'
-                    WHEN b.Item_Name IS NOT NULL THEN 'Borrowed'
-                    WHEN a.Item_Quantity = 0 THEN 'No Stock'
-                    WHEN a.Item_Quantity <= 5 THEN 'Low Stock'
-                    ELSE 'Available'
-                END AS Status
-            FROM Roni.InventorySystemdatabaseUpdated..dbo.AvailableItems a
-            LEFT JOIN Roni.InventorySystemdatabaseUpdated.Tables.dbo.BorrowedItems b ON a.Item_Name = b.Item_Name
-            LEFT JOIN Roni.InventorySystemdatabaseUpdated.Tables.dbo.ReportedItems d ON a.Item_Name = d.Report_Status";
+        SELECT a.Item_Name, a.Item_Quantity, a.Item_ID, a.Item_Description,
+            CASE 
+                WHEN d.Item_ID IS NOT NULL THEN 'Damaged'
+                WHEN b.Item_ID IS NOT NULL THEN 'Borrowed'
+                WHEN a.Item_Quantity = 0 THEN 'No Stock'
+                WHEN a.Item_Quantity <= a.Item_Low_Indicator THEN 'Low Stock'
+                ELSE 'Available'
+            END AS Status
+        FROM Roni.InventorySystemdatabaseUpdated.dbo.AvailableItems a
+        LEFT JOIN Roni.InventorySystemdatabaseUpdated.dbo.BorrowedItems b ON a.Item_ID = b.Item_ID
+        LEFT JOIN Roni.InventorySystemdatabaseUpdated.dbo.ReportedItems d ON a.Item_ID = d.Item_ID";
 
                 SqlCommand cmd = new(query, conn);
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -47,8 +47,10 @@ namespace StockNotification
                 {
                     stockList.Add(new StockItem
                     {
-                        ItemName = reader["Item_Name"]?.ToString() ?? string.Empty,
-                        Stock = Convert.ToInt32(reader["Item_Quantity"]),
+                        EquipmentID = reader["Item_ID"]?.ToString() ?? string.Empty,
+                        Name = reader["Item_Name"]?.ToString() ?? string.Empty,
+                        Stock = reader["Item_Quantity"] != DBNull.Value ? Convert.ToInt32(reader["Item_Quantity"]) : 0, // Handle null
+                        Description = reader["Item_Description"]?.ToString() ?? string.Empty,
                         Status = reader["Status"]?.ToString() ?? string.Empty
                     });
                 }
@@ -81,7 +83,7 @@ namespace StockNotification
             }
         }
        
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             StockNotificationDataGrid.ItemsSource = stockList; // Reload all items
         }
@@ -98,15 +100,17 @@ namespace StockNotification
             if (StockNotificationDataGrid.SelectedItem is StockItem selectedItem)
             {
                 // Example: Display the selected item's name
-                MessageBox.Show($"Selected Item: {selectedItem.ItemName}", "Selection Changed");
+                MessageBox.Show($"Selected Item: {selectedItem.Name}", "Selection Changed");
             }
         }
     }
 
     public class StockItem
     {
-        public string ItemName { get; set; }
+        public string EquipmentID { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public int Stock { get; set; }
-        public string Status { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
     }
 }
