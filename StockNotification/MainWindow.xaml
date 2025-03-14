@@ -42,14 +42,14 @@
                 </DataGrid.Columns>
             </DataGrid>
             <Button Content="ALL EQUIPMENT" 
-                Margin="49,116,779,537"
+                Margin="31,137,779,499"
                 FontWeight="Bold"
                 FontSize="16"
                 Foreground="Black"
                 Background="White"
                 Padding="10"
                 BorderThickness="0"
-                Cursor="Hand" Click="Button_Click_1">
+                Cursor="Hand" Click="Button_Reset_Click">
                 <Button.Effect>
                     <DropShadowEffect Color="Gray" BlurRadius="10" ShadowDepth="3"/>
                 </Button.Effect>
@@ -72,7 +72,7 @@
 
             <!-- Borrowed Button -->
             <Button Content="BORROWED" 
-                Margin="233,116,595,537"
+                Margin="219,137,591,499"
                 FontWeight="Bold"
                 FontSize="16"
                 Foreground="Lime"
@@ -101,15 +101,15 @@
             </Button>
 
             <!-- Low Stock Button -->
-            <Button Content="LOW STOCK" 
-                Margin="414,115,414,537"
+            <Button Content="LOW STOCK"  
+                Margin="405,137,405,499"
                 FontWeight="Bold"
                 FontSize="16"
                 Foreground="Yellow"
                 Background="White"
                 Padding="10"
                 BorderThickness="0"
-                Cursor="Hand">
+                Cursor="Hand" Click="Button_LowStock_Click">
                 <Button.Effect>
                     <DropShadowEffect Color="Gray" BlurRadius="10" ShadowDepth="3"/>
                 </Button.Effect>
@@ -132,14 +132,14 @@
 
             <!-- No Stock Button -->
             <Button Content="NO STOCK" 
-                Margin="599,115,229,537"
+                Margin="594,137,216,499"
                 FontWeight="Bold"
                 FontSize="16"
                 Foreground="Red"
                 Background="White"
                 Padding="10"
                 BorderThickness="0"
-                Cursor="Hand">
+                Cursor="Hand" Click="Button_NoStock_Click">
                 <Button.Effect>
                     <DropShadowEffect Color="Gray" BlurRadius="10" ShadowDepth="3"/>
                 </Button.Effect>
@@ -162,14 +162,14 @@
 
             <!-- Damaged Button -->
             <Button Content="DAMAGED" 
-                Margin="785,115,43,537"
+                Margin="784,137,26,499"
                 FontWeight="Bold"
                 FontSize="16"
                 Foreground="Gray"
                 Background="White"
                 Padding="10"
                 BorderThickness="0"
-                Cursor="Hand">
+                Cursor="Hand" Click="Button_Damaged_Click">
                 <Button.Effect>
                     <DropShadowEffect Color="Gray" BlurRadius="10" ShadowDepth="3"/>
                 </Button.Effect>

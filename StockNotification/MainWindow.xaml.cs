@@ -28,17 +28,17 @@ namespace StockNotification
             {
                 conn.Open();
                 string query = @"
-        SELECT a.Item_Name, a.Item_Quantity, a.Item_ID, a.Item_Description,
-            CASE 
-                WHEN d.Item_ID IS NOT NULL THEN 'Damaged'
-                WHEN b.Item_ID IS NOT NULL THEN 'Borrowed'
-                WHEN a.Item_Quantity = 0 THEN 'No Stock'
-                WHEN a.Item_Quantity <= a.Item_Low_Indicator THEN 'Low Stock'
-                ELSE 'Available'
-            END AS Status
-        FROM Roni.InventorySystemdatabaseUpdated.dbo.AvailableItems a
-        LEFT JOIN Roni.InventorySystemdatabaseUpdated.dbo.BorrowedItems b ON a.Item_ID = b.Item_ID
-        LEFT JOIN Roni.InventorySystemdatabaseUpdated.dbo.ReportedItems d ON a.Item_ID = d.Item_ID";
+                SELECT a.Item_Name, a.Item_Quantity, a.Item_ID, a.Item_Description,
+                    CASE 
+                        WHEN d.Item_ID IS NOT NULL THEN 'Damaged'
+                        WHEN b.Item_ID IS NOT NULL THEN 'Borrowed'
+                        WHEN a.Item_Quantity = 0 THEN 'No Stock'
+                        WHEN a.Item_Quantity <= a.Item_Low_Indicator THEN 'Low Stock'
+                        ELSE 'Available'
+                    END AS Status
+                FROM Roni.InventorySystemdatabaseUpdated.dbo.AvailableItems a
+                LEFT JOIN Roni.InventorySystemdatabaseUpdated.dbo.BorrowedItems b ON a.Item_ID = b.Item_ID
+                LEFT JOIN Roni.InventorySystemdatabaseUpdated.dbo.ReportedItems d ON a.Item_ID = d.Item_ID";
 
                 SqlCommand cmd = new(query, conn);
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -63,11 +63,43 @@ namespace StockNotification
                 MessageBox.Show($"Error loading stock data: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // **Filter Methods for Each Status**
         private void Button_Damaged_Click(object sender, RoutedEventArgs e)
         {
-            var damagedItems = stockList.FindAll(item => item.Status == "Damaged");
-            StockNotificationDataGrid.ItemsSource = damagedItems;
+            FilterData("Damaged");
         }
+
+        private void Button_Borrowed_Click(object sender, RoutedEventArgs e)
+        {
+            FilterData("Borrowed");
+        }
+
+        private void Button_LowStock_Click(object sender, RoutedEventArgs e)
+        {
+            FilterData("Low Stock");
+        }
+
+        private void Button_NoStock_Click(object sender, RoutedEventArgs e)
+        {
+            FilterData("No Stock");
+        }
+
+        private void Button_Reset_Click(object sender, RoutedEventArgs e)
+        {
+            StockNotificationDataGrid.ItemsSource = stockList; // Reload all items
+            StockNotificationDataGrid.Items.Refresh(); // Ensure UI updates
+        }
+
+        // **Filter Function**
+        private void FilterData(string status)
+        {
+            var filteredItems = stockList.FindAll(item => item.Status == status);
+            StockNotificationDataGrid.ItemsSource = filteredItems;
+            StockNotificationDataGrid.Items.Refresh(); // Ensure UI updates
+        }
+
+        // **Highlighting Based on Status**
         private void StockNotificationDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             if (e.Row.Item is StockItem stockItem)
@@ -82,24 +114,11 @@ namespace StockNotification
                 };
             }
         }
-       
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            StockNotificationDataGrid.ItemsSource = stockList; // Reload all items
-        }
-
-        private void Button_Borrowed_Click(object sender, RoutedEventArgs e)
-        {
-            var borrowedItems = stockList.FindAll(item => item.Status == "Borrowed");
-            StockNotificationDataGrid.ItemsSource = borrowedItems; // No database call, just filtering
-        }
 
         private void StockNotificationDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Handle the selection changed event
             if (StockNotificationDataGrid.SelectedItem is StockItem selectedItem)
             {
-                // Example: Display the selected item's name
                 MessageBox.Show($"Selected Item: {selectedItem.Name}", "Selection Changed");
             }
         }
