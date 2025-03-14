@@ -33,13 +33,7 @@
 
             <DataGrid x:Name="StockNotificationDataGrid" AutoGenerateColumns="False" CanUserAddRows="False"
                       Margin="70,150,70,82" Background="White" HeadersVisibility="Column" SelectionChanged="StockNotificationDataGrid_SelectionChanged">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button Content="ALL EQUIPMENT" Padding="10,5" Margin="5"/>
-                    <Button Content="BORROWED" Padding="10,5" Margin="5" Background="LightGreen"/>
-                    <Button Content="LOW STOCK" Padding="10,5" Margin="5" Background="Yellow"/>
-                    <Button Content="NO STOCK" Padding="10,5" Margin="5" Background="Red"/>
-                    <Button Content="DAMAGED" Padding="10,5" Margin="5" Background="Gray"/>
-                </StackPanel>
+                
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="equipmentID" Binding="{Binding equipmentID}" Width="150"/>
                     <DataGridTextColumn Header="name" Binding="{Binding name}" Width="400"/>
